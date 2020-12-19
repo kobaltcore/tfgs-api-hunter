@@ -307,6 +307,14 @@ class Token(BaseModel):
 
 
 @app.on_event("startup")
+@repeat_every(seconds=600)  # 10 minutes
+async def trigger_crawl_tfgs():
+    print("Running scheduled crawl task")
+    await crawl_tfgs()
+
+
+
+@app.on_event("startup")
 @repeat_every(seconds=60 * 60)  # 1 hour
 async def trigger_crawl_tfgs():
     print("Running scheduled crawl task")
