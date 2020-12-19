@@ -313,13 +313,6 @@ async def trigger_crawl_tfgs():
     await crawl_tfgs()
 
 
-@app.on_event("startup")
-@repeat_every(seconds=60 * 60)  # 1 hour
-async def trigger_crawl_tfgs():
-    print("Running scheduled crawl task")
-    await crawl_tfgs()
-
-
 # @app.on_event("shutdown")
 # def shutdown_event():
 #     pass
@@ -730,7 +723,7 @@ async def crawl_tfgs():
         print("Fetching game info")
 
         all_links = []
-        for url in sorted(game_links)[:100]:
+        for url in sorted(game_links):
             game_id = int(url.split("id=")[1])
             all_links.append((game_id, "game", url))
             all_links.append(
