@@ -11,6 +11,7 @@ from urllib.parse import urljoin, urlparse
 from typing import *
 from pydantic import BaseModel, BaseSettings
 from fastapi import FastAPI, BackgroundTasks
+from fastapi_utils.tasks import repeat_every
 
 ### Security ###
 # from jose import JWTError, jwt
@@ -305,9 +306,11 @@ class Token(BaseModel):
 ### Events ###
 
 
-# @app.on_event("startup")
-# def startup_event():
-#     print(f"Config: {config}")
+@app.on_event("startup")
+@repeat_every(seconds=60 * 60)  # 1 hour
+async def trigger_crawl_tfgs():
+    print("Running scheduled crawl task")
+    await crawl_tfgs()
 
 
 # @app.on_event("shutdown")
