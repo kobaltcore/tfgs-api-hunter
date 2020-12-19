@@ -723,7 +723,7 @@ async def crawl_tfgs():
         print("Fetching game info")
 
         all_links = []
-        for url in sorted(game_links):
+        for url in sorted(game_links)[:200]:
             game_id = int(url.split("id=")[1])
             all_links.append((game_id, "game", url))
             all_links.append(
