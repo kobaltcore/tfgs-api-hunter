@@ -370,6 +370,7 @@ def db_game_to_pgame(game):
         themes=themes,
         thread=game.thread,
         versions=dict(versions),
+        play_online=game.play_online,
         synopsis={"text": game.synopsis_text, "html": game.synopsis_html},
         plot={"text": game.plot_text, "html": game.plot_html},
         characters={"text": game.characters_text, "html": game.characters_html},
