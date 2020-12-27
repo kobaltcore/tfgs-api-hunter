@@ -178,7 +178,7 @@ class Review(db.Entity):
 
 if config.DB_TYPE == "sqlite":
     db.bind(provider="sqlite", filename=os.path.abspath(config.DB_FILE), create_db=True)
-else:
+elif config.DB_TYPE == "postgres":
     parsed = urlparse(config.DATABASE_URL)
     db.bind(
         provider="postgres",
@@ -187,6 +187,16 @@ else:
         host=parsed.hostname,
         port=parsed.port,
         database=parsed.path.lstrip("/"),
+    )
+elif config.DB_TYPE == "mysql":
+    parsed = urlparse(config.DATABASE_URL)
+    db.bind(
+        provider="mysql",
+        user=parsed.username,
+        passwd=parsed.password,
+        host=parsed.hostname,
+        port=parsed.port,
+        db=parsed.path.lstrip("/"),
     )
 
 db.generate_mapping(create_tables=True)
@@ -723,7 +733,7 @@ async def crawl_tfgs():
         print("Fetching game info")
 
         all_links = []
-        for url in sorted(game_links)[:200]:
+        for url in sorted(game_links)[:100]:
             game_id = int(url.split("id=")[1])
             all_links.append((game_id, "game", url))
             all_links.append(
@@ -750,13 +760,11 @@ async def crawl_tfgs():
         games = []
         for game_id, data in result.items():
             game = parse_game_page(game_id, data["game"], data["reviews"])
-            games.append(game)
+            if game:
+                games.append(game)
 
         print("Writing to database")
         for game in games:
-            if not game:
-                continue
-
             try:
                 pgame_to_db_game(game)
             except Exception as e:
